@@ -1,10 +1,16 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import loginImg from "../../assets/images/login/login.svg";
 import { AuthContext } from "../../contexts/AuthProvider";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Login = () => {
+
     const { login } = useContext(AuthContext);
+    const location = useLocation();
+    const navigate = useNavigate();
+    let from = location.state?.from?.pathname || "/";
+
     const handleLogin = (event) => {
         event.preventDefault();
         const form = event.target;
@@ -14,6 +20,20 @@ const Login = () => {
         .then(result => {
           const user = result.user;
           console.log(user);
+          fetch('https://genius-car-server-nu-bice.vercel.app/jwt', {
+            method: 'POST',
+            headers: {
+              "content-type":"application/json"
+            },
+            body: JSON.stringify(user)
+          })
+          .then(res => res.json())
+          .then(data => {
+            console.log(data.token);
+            localStorage.setItem('carToken', data.token)
+            navigate(from, { replace: true });
+          })
+        
         })
         .catch(err => console.log(err))
     }
@@ -59,8 +79,10 @@ const Login = () => {
             </div>
           </form>
           <p className="text-center">Don't have an account ?<Link className="text-orange-600 font-bold" to='/signup'>Sign Up</Link></p>
+          <SocialLogin></SocialLogin>
         </div>
       </div>
+    
     </div>
   );
 };

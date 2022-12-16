@@ -4,15 +4,24 @@ import { AuthContext } from "../../contexts/AuthProvider";
 import OrderRow from "./OrderRow";
 
 const Orders = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logOut } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/orders?email=${user?.email}`)
-      .then((res) => res.json())
+    fetch(`https://genius-car-server-nu-bice.vercel.app/orders?email=${user?.email}`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('carToken')}`
+      }
+    })
+      .then((res) =>{
+        if(res.status === 401 || res.status === 403) {
+          return logOut();
+        }
+        return res.json();
+        })
       .then((data) => setOrders(data))
       .catch((err) => console.log(err));
-  }, [user?.email]);
+  }, [user?.email, logOut]);
 
   const handleDeleteOrder = (id) => {
     Swal.fire({
@@ -31,10 +40,11 @@ const Orders = () => {
   };
 
   const deleteOperation = (id) => {
-    fetch(`http://localhost:5000/orders/${id}`, {
+    fetch(`https://genius-car-server-nu-bice.vercel.app/orders/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem('carToken')}`
       },
     })
       .then((res) => res.json())
@@ -51,10 +61,11 @@ const Orders = () => {
   };
 
   const handleStatusUpdate = id => {
-    fetch(`http://localhost:5000/orders/${id}`, {
+    fetch(`https://genius-car-server-nu-bice.vercel.app/orders/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem('carToken')}`
       },
       body: JSON.stringify({status:'Approved'})
     })

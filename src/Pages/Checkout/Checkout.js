@@ -27,10 +27,11 @@ const Checkout = () => {
     //     alert('Phone number should be 10 char longer')
     // }
 
-    fetch("http://localhost:5000/orders", {
+    fetch("https://genius-car-server-nu-bice.vercel.app/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+         authorization: `Bearer ${localStorage.getItem('carToken')}`
       },
       body: JSON.stringify(order),
     })
