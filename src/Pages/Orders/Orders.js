@@ -8,6 +8,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    console.log(`Bearer ${localStorage.getItem('carToken')}`)
     fetch(`https://genius-car-server-nu-bice.vercel.app/orders?email=${user?.email}`, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('carToken')}`

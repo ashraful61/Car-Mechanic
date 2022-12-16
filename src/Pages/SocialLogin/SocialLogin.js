@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { setAuthToken } from '../../api/auth';
 import { AuthContext } from '../../contexts/AuthProvider';
 
 const SocialLogin = () => {
@@ -9,6 +10,7 @@ const SocialLogin = () => {
         .then(result => {
             const user = result.user;
             console.log(user)
+            setAuthToken(user)
         })
         .catch(err => console.log(err))
     }
